@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorMatch - Temukan Mentor Terbaik Anda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --accent: #f97316;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #94a3b8;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .scrolled nav {
+            padding: 0.75rem 0;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .logo span {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, var(--secondary), var(--secondary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* Mobile Nav */
+        .mobile-nav {
+            position: fixed;
+            top: 70px; /* Adjust based on header height, or calculate dynamically */
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            padding: 1rem 1.5rem; /* Adjusted padding */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-150%); /* Ensure it's fully hidden initially */
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            z-index: 99; /* Below header */
+        }
+
+        .mobile-nav.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 0.75rem 0;
+            text-decoration: none;
+            color: var(--dark);
+            border-bottom: 1px solid var(--light);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-nav .btn {
+            display: inline-block; /* Make it inline-block for better sizing */
+            width: 100%; /* Full width for mobile */
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem 1rem; /* Adjust padding for mobile */
+        }
+
+
+        /* Hero */
+        .hero {
+            padding: 12rem 0 8rem;
+            position: relative;
+            overflow: hidden;
+            background-color: #f0f4ff; /* Fallback background */
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -2; /* Furthest back */
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070') no-repeat center center/cover;
+            opacity: 0.15;
+            /* z-index not needed here, part of hero-bg stacking context */
+        }
+
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.2), rgba(16, 185, 129, 0.2));
+            /* z-index not needed here */
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+            position: relative; /* For stacking context */
+            z-index: 1; /* Ensure content is above floating cards and bg */
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-image {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+            color: var(--dark);
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-stat span:first-child {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .hero-stat span:last-child {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .floating-cards {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1; /* Above hero-bg, but behind hero-content */
+        }
+
+        .floating-card {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .floating-card.card-1 {
+            top: 20%;
+            left: 5%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-card.card-2 {
+            bottom: 15%;
+            right: 5%;
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .floating-card.card-3 {
+            top: 60%;
+            left: 15%;
+            animation: float 7s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Features */
+        .features {
+            padding: 8rem 0;
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(16, 185, 129, 0.05));
+            top: -300px;
+            right: -300px;
+            z-index: 0;
+        }
+
+        .features::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(67, 97, 238, 0.05));
+            bottom: -200px;
+            left: -200px;
+            z-index: 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-subtitle {
+            display: inline-block;
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(16, 185, 129, 0.1));
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .section-description {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(16, 185, 129, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 8rem 0;
+            background-color: #f8fafc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071') no-repeat top right/cover;
+            opacity: 0.04;
+            z-index: 0;
+        }
+
+        .steps-container {
+            position: relative;
+            margin-top: 4rem;
+        }
+
+        .steps-line {
+            position: absolute;
+            top: 60px; /* Should align with center of step-number */
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 0;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .step:hover {
+            transform: translateY(-8px);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+            box-shadow: 0 8px 16px rgba(67, 97, 238, 0.25);
+        }
+
+        .step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .step p {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 8rem 0;
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(16, 185, 129, 0.05));
+            top: -250px;
+            left: -250px;
+            z-index: 0;
+        }
+
+        .testimonial-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '\201C';
+            font-size: 6rem;
+            color: rgba(67, 97, 238, 0.1);
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .testimonial-rating {
+            display: flex;
+            gap: 0.25rem;
+            color: #ffc107;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light);
+            margin-right: 1rem;
+            overflow: hidden;
+        }
+
+        .author-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .author-info p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Stats */
+        .stats {
+            padding: 5rem 0;
+            background-color: #f0f4ff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070') no-repeat center/cover;
+            opacity: 0.04;
+            z-index: 0;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            padding: 2rem;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070') no-repeat center/cover;
+            opacity: 0.08;
+            z-index: 0;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta .btn {
+            background-color: var(--white);
+            color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+        }
+
+        .cta .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 5rem 0 3rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .footer-logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo span {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-col p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: translateY(-3px);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--white);
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .contact-details {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .newsletter form {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter input[type="email"] {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 50px 0 0 50px;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .newsletter input[type="email"]::placeholder {
+            color: var(--gray);
+        }
+
+        .newsletter button {
+            padding: 0 1.25rem;
+            border-radius: 0 50px 50px 0;
+            border: none;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            cursor: pointer;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Chatbot */
+        .chat-widget {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(67, 97, 238, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 80px; /* Position above the button */
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15); /* Added shadow color */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95); /* Slight offset for transition */
+            opacity: 0;
+            pointer-events: none; /* Prevent interaction when hidden */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            margin-bottom: 1rem; /* Space from button if needed, but bottom: 80px handles it */
+        }
+
+        .chat-container.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto; /* Allow interaction when active */
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .close-chat {
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 75%;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: var(--light);
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: var(--primary);
+            color: var(--white);
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid var(--light);
+            background-color: var(--white);
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light);
+            border-radius: 24px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--light);
+            border-radius: 12px;
+            align-self: flex-start;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gray);
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: dot-pulse 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dot-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-text {
+                max-width: 100%;
+            }
+
+            .hero-image {
+                max-width: 500px;
+            }
+
+            .hero-stats {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+            /* Redundant .mobile-nav.active and .mobile-nav a rules removed from here as they are globally defined */
+
+            .hero {
+                padding: 10rem 0 6rem; /* Adjusted padding for smaller header */
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .chat-container {
+                width: calc(100% - 2rem); /* Full width with some margin */
+                max-width: 360px; /* Keep a max width */
+                height: calc(100vh - 120px); /* Adjust height for mobile view */
+                max-height: 450px;
+                right: 1rem;
+                bottom: 70px; /* Adjust based on chat button position */
+            }
+            .mobile-nav {
+                /* Adjust top based on potentially smaller scrolled header height */
+                /* Example: if scrolled header is ~50px, top: 50px */
+                /* Keeping 70px as a general value, can be fine-tuned */
+                 top: 60px; /* Example adjustment if header shrinks more */
+            }
+             .hero {
+                padding-top: 8rem; /* Reduced padding top to account for fixed header */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-cards,
+            .steps,
+            .testimonial-cards,
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .hero-stat span:first-child {
+                font-size: 2rem;
+            }
+
+             .mobile-nav .btn {
+                font-size: 0.9rem; /* Slightly smaller button text on very small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Mentor<span>Match</span></div>
+                <div class="nav-links">
+                    <a href="#features">Fitur</a>
+                    <a href="#how-it-works">Cara Kerja</a>
+                    <a href="#testimonials">Testimoni</a>
+                    <a href="#" class="btn btn-primary">Mulai Sekarang</a>
+                </div>
+                <div class="mobile-menu">☰</div>
+            </nav>
+        </div>
+        <!-- Mobile Navigation HTML Structure -->
+        <div class="mobile-nav">
+            <a href="#features">Fitur</a>
+            <a href="#how-it-works">Cara Kerja</a>
+            <a href="#testimonials">Testimoni</a>
+            <a href="#" class="btn btn-primary">Mulai Sekarang</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="floating-cards">
+            <div class="floating-card card-1">🔍 Pencarian Cerdas</div>
+            <div class="floating-card card-2">🏆 Mentor Terverifikasi</div>
+            <div class="floating-card card-3">💼 Peluang Karir</div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Temukan Mentor Terbaik untuk Karir Impian Anda</h1>
+                    <p>MentorMatch menghubungkan Anda dengan mentor profesional untuk mengembangkan karir dan keterampilan Anda. Mulai perjalanan menuju kesuksesan sekarang.</p>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary">Cari Mentor</a>
+                        <a href="#" class="btn btn-secondary">Jadi Mentor</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat"><span>500+</span><span>Mentor</span></div>
+                        <div class="hero-stat"><span>10K+</span><span>Mentee</span></div>
+                        <div class="hero-stat"><span>50K+</span><span>Sesi</span></div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="./gallery/beuh-removebg-preview.png" alt="MentorMatch Platform">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Kenapa Memilih Kami</span>
+                <h2 class="section-title">Fitur Unggulan</h2>
+                <p class="section-description">Temukan alasan mengapa MentorMatch adalah pilihan terbaik untuk pengembangan karir Anda.</p>
+            </div>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-search"></i></div>
+                    <h3>Pencarian Cerdas</h3>
+                    <p>Temukan mentor yang sesuai dengan kebutuhan spesifik Anda melalui sistem pencarian cerdas kami.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3>Jadwal Fleksibel</h3>
+                    <p>Atur sesi mentoring sesuai dengan jadwal yang cocok untuk Anda dan mentor Anda.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                    <h3>Konsultasi Real-time</h3>
+                    <p>Dapatkan bimbingan langsung melalui video call, chat, atau email sesuai kebutuhan Anda.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Lacak Kemajuan</h3>
+                    <p>Pantau perkembangan karir dan keterampilan Anda dengan alat pelacakan kemajuan kami.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+                    <h3>Mentor Terverifikasi</h3>
+                    <p>Semua mentor telah melalui proses verifikasi ketat untuk menjamin kualitas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Peluang Karir</h3>
+                    <p>Akses peluang karir eksklusif melalui jaringan luas mentor profesional kami.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Langkah Mudah</span>
+                <h2 class="section-title">Cara Kerja</h2>
+                <p class="section-description">Ikuti langkah sederhana ini untuk memulai perjalanan Anda dengan MentorMatch.</p>
+            </div>
+            <div class="steps-container">
+                <div class="steps-line"></div>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Daftar</h3>
+                        <p>Buat akun gratis dan lengkapi profil Anda.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Cari Mentor</h3>
+                        <p>Jelajahi dan temukan mentor yang sesuai dengan kebutuhan karir Anda.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Jadwalkan Sesi</h3>
+                        <p>Atur jadwal pertemuan dengan mentor pilihan Anda.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Mulai Belajar</h3>
+                        <p>Dapatkan bimbingan dan berkembang bersama mentor profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Cerita Sukses</span>
+                <h2 class="section-title">Apa Kata Mereka</h2>
+                <p class="section-description">Dengarkan pengalaman pengguna yang telah merasakan manfaat dari MentorMatch.</p>
+            </div>
+            <div class="testimonial-cards">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"MentorMatch membantu saya menemukan mentor yang tepat untuk karir di bidang teknologi. Sekarang saya bekerja di startup impian saya!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100" alt="Budi Santoso"></div>
+                        <div class="author-info">
+                            <h4>Budi Santoso</h4>
+                            <p>Software Developer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Sebagai mentor, saya senang berbagi pengalaman di MentorMatch. Platform ini sangat profesional dan mudah digunakan."</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="Anita Wijaya"></div>
+                        <div class="author-info">
+                            <h4>Anita Wijaya</h4>
+                            <p>Marketing Director</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Mentor saya di MentorMatch memberikan wawasan kepemimpinan yang tak ternilai. Saya sangat merekomendasikan platform ini!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=100" alt="Dian Purnama"></div>
+                        <div class="author-info">
+                            <h4>Dian Purnama</h4>
+                            <p>Project Manager</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Dampak Kami</span>
+                <h2 class="section-title">MentorMatch dalam Angka</h2>
+                <p class="section-description">Lihat bagaimana kami telah membantu ribuan profesional mencapai tujuan karir mereka.</p>
+            </div>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Mentor Profesional</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Mentee Terbantu</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Sesi Mentoring</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-star-half-alt"></i></div>
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Tingkat Kepuasan</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Siap Mengembangkan Karir Anda?</h2>
+                <p>Bergabunglah dengan ribuan profesional yang telah meningkatkan karir mereka melalui MentorMatch. Daftar sekarang!</p>
+                <a href="#" class="btn">Mulai Sekarang</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <div class="footer-logo">Mentor<span>Match</span></div>
+                    <p>Platform yang menghubungkan pencari mentor dengan mentor profesional untuk pengembangan karir.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Tautan</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li><a href="#features"><i class="fas fa-cogs"></i> Fitur</a></li>
+                        <li><a href="#how-it-works"><i class="fas fa-project-diagram"></i> Cara Kerja</a></li>
+                        <li><a href="#testimonials"><i class="fas fa-comment-dots"></i> Testimoni</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Perusahaan</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-info-circle"></i> Tentang Kami</a></li>
+                        <li><a href="#"><i class="fas fa-briefcase"></i> Karir</a></li>
+                        <li><a href="#"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> Kontak</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Kontak</h3>
+                    <div class="contact-info">
+                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="contact-details">support@mentormatch.com</div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                        <div class="contact-details">+62 21 1234 5678</div>
+                    </div>
+                    <div class="newsletter">
+                        <h3>Newsletter</h3>
+                        <form>
+                            <input type="email" placeholder="Masukkan email Anda">
+                            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© <span id="current-year"></span> MentorMatch. Hak Cipta Dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="chat-widget">
+        <div class="chat-button"><i class="fas fa-comment-dots"></i></div>
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="header-content">
+                    <div class="chat-avatar"><i class="fas fa-robot"></i></div>
+                    <h3>MentorMatch Asisten</h3>
+                </div>
+                <div class="close-chat"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="chat-messages">
+                <div class="message bot-message">
+                    Halo! Selamat datang di MentorMatch. Bagaimana saya bisa membantu Anda hari ini?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Ketik pesan Anda..." id="chat-input-field">
+                <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Header scroll effect
+        const header = document.querySelector('header');
+        const mobileNav = document.querySelector('.mobile-nav');
+        let headerHeight = header.offsetHeight;
+
+        function updateHeaderStates() {
+            headerHeight = header.offsetHeight; // Recalculate header height
+            header.classList.toggle('scrolled', window.scrollY > 0);
+            // Adjust mobile-nav top position based on current header height
+            if (mobileNav) {
+                 mobileNav.style.top = `${headerHeight}px`;
+            }
+        }
+        
+        window.addEventListener('scroll', updateHeaderStates);
+        window.addEventListener('resize', updateHeaderStates); // Update on resize too
+        document.addEventListener('DOMContentLoaded', updateHeaderStates); // Initial check
+
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu');
+        // mobileNav already declared above
+        const mobileNavLinks = mobileNav.querySelectorAll('a');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mobileNav.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            // Ensure mobileNav top is set correctly when opened
+            if (mobileNav.classList.contains('active')) {
+                mobileNav.style.top = `${header.offsetHeight}px`;
+            }
+        });
+        
+        // Set initial mobile menu icon
+        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Chatbot functionality
+        const chatButton = document.querySelector('.chat-button');
+        const chatContainer = document.querySelector('.chat-container');
+        const closeChat = document.querySelector('.close-chat');
+        const chatMessages = document.querySelector('.chat-messages');
+        const chatInput = document.getElementById('chat-input-field');
+        const sendBtn = document.querySelector('.send-btn');
+
+        // IMPORTANT: NEVER expose API keys in client-side code in a production environment.
+        // This key is a placeholder from the original code and should be managed via a backend proxy for security.
+        // Using a clearly fake placeholder for demonstration.
+        const API_KEY = 'AIzaSyAC7sC0UVVHo0vT1aNlt4kjzurBNVuu8iQ'; // Replace with YOUR_ACTUAL_KEY if testing, but move to backend for production.
+
+        chatButton.addEventListener('click', () => {
+            chatContainer.classList.toggle('active');
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatContainer.classList.remove('active');
+        });
+
+        // Handle sending messages
+        const sendMessage = async () => {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            // Add user message to UI
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('message', 'user-message');
+            userMessageDiv.textContent = messageText;
+            chatMessages.appendChild(userMessageDiv);
+
+            // Clear input
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll after adding user message
+
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll after adding typing indicator
+
+            try {
+                // Attempt to call Google Gemini API
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: messageText
+                            }]
+                        }]
+                    })
+                });
+
+                // Remove typing indicator
+                if (typingIndicator.parentNode) {
+                     typingIndicator.remove();
+                }
+
+                if (!response.ok) {
+                    console.error('API request failed with status:', response.status);
+                    const errorData = await response.text(); // Try to get error body
+                    console.error('Error details:', errorData);
+                    throw new Error(`API request failed: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                let botResponseText = "Maaf, saya tidak dapat memproses permintaan Anda saat ini."; // Default fallback
+                if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+                    botResponseText = data.candidates[0].content.parts[0].text;
+                } else if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    botResponseText = `Permintaan diblokir: ${data.promptFeedback.blockReason}. Coba pertanyaan lain.`;
+                     console.warn("Prompt feedback:", data.promptFeedback);
+                }
+
+
+                // Add bot response to UI
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.classList.add('message', 'bot-message');
+                botMessageDiv.textContent = botResponseText;
+                chatMessages.appendChild(botMessageDiv);
+
+            } catch (error) {
+                console.error('Error during API call or processing:', error);
+                 // Remove typing indicator if it's still there from a failed try block
+                if (typingIndicator.parentNode) {
+                     typingIndicator.remove();
+                }
+                // Fallback to local response on any error (API or JS)
+                const botResponseText = getLocalResponse(messageText);
+
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.classList.add('message', 'bot-message');
+                botMessageDiv.textContent = botResponseText;
+                chatMessages.appendChild(botMessageDiv);
+            }
+
+            // Scroll to bottom after bot response
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        // Local response fallback function
+        function getLocalResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            if (lowerMsg.includes('halo') || lowerMsg.includes('hai')) {
+                return "Halo! Ada yang bisa saya bantu terkait MentorMatch?";
+            } else if (lowerMsg.includes('mentor') || lowerMsg.includes('cari mentor')) {
+                return "Anda dapat mengklik tombol 'Cari Mentor' di bagian atas halaman untuk menemukan mentor yang sesuai dengan kebutuhan Anda.";
+            } else if (lowerMsg.includes('daftar') || lowerMsg.includes('register') || lowerMsg.includes('gabung')) {
+                return "Untuk mendaftar, silakan klik tombol 'Mulai Sekarang' di navigasi atau di bagian CTA. Prosesnya mudah dan cepat!";
+            } else if (lowerMsg.includes('biaya') || lowerMsg.includes('harga') || lowerMsg.includes('paket')) {
+                return "Informasi mengenai biaya atau paket mentoring dapat Anda temukan di halaman harga kami. Saat ini, pendaftaran dasar gratis!";
+            } else if (lowerMsg.includes('fitur')) {
+                return "MentorMatch memiliki banyak fitur unggulan seperti Pencarian Cerdas, Jadwal Fleksibel, Konsultasi Real-time, dan Pelacakan Kemajuan. Lihat bagian 'Fitur Unggulan' di halaman ini!";
+            } else if (lowerMsg.includes('terima kasih') || lowerMsg.includes('makasih')) {
+                return "Sama-sama! Senang bisa membantu.";
+            } else {
+                return "Maaf, saya mungkin belum mengerti pertanyaan Anda. Bisakah Anda mencoba bertanya dengan cara lain terkait layanan MentorMatch?";
+            }
+        }
+
+        // Event listeners for sending messages
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent default form submission if input is in a form
+                sendMessage();
+            }
+        });
+
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Replace text icons with FontAwesome icons
+        // Feature Icons are already FontAwesome in HTML
+        // Stats Icons
+        const statIcons = document.querySelectorAll('.stat-icon');
+        if (statIcons.length >= 4) {
+            // statIcons[0].innerHTML = '<i class="fas fa-users"></i>'; // Users (Mentor Profesional)
+            // statIcons[1].innerHTML = '<i class="fas fa-graduation-cap"></i>'; // Graduation Cap (Mentee Terbantu)
+            // statIcons[2].innerHTML = '<i class="fas fa-calendar-check"></i>'; // Calendar Check (Sesi Mentoring)
+            // statIcons[3].innerHTML = '<i class="fas fa-star-half-alt"></i>'; // Star (Tingkat Kepuasan)
+        }
+        // Chat button and close icons already updated in HTML
+        // Newsletter button icon already updated in HTML
+        // Mobile menu icon updated in JS
+    </script>
+</body>
+</html>
